@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="style.css" rel="stylesheet" >
+</head>
+<body>
+    <div class="container">
+        <div  id="chat">
+            <p>cdfdfg</p>
+        </div>
+        <div class="send">
+            <input id="msg" type="text" placeholder="type the msg you wanna send" >
+            <button onclick="sendMessage()">send</button>
+            
+        </div>
+    </div>
+    <script>
+        const ws = new WebSocket("ws://localhost:3000");
+        ws.addEventListener("message",function(e){
+            const data=JSON.parse(e.data);
+            if(data.type === "message"){
+                addMessage(data.data);
+            }
+        });
+        function sendMessage(){
+            const msg = document.getElementById('msg').value;
+            if(!msg)
+                return false;
+            ws.send(JSON.stringify({type: 'message', data: msg}));
+            addMessage(msg);
+            document.getElementById('msg').value='';
+        }
+        function addMessage(msg){
+            const node = document.createElement("P");
+            const text = document.createTextNode(msg);
+            node.appendChild(text);
+            document.getElementById('chat').appendChild(node);
+        }
+    </script>
+</body>
+</html>
